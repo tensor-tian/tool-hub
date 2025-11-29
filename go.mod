@@ -2,7 +2,20 @@ module tool-hub
 
 go 1.23
 
-require github.com/wailsapp/wails/v2 v2.11.0
+require (
+	github.com/stretchr/testify v1.10.0
+	github.com/wailsapp/wails/v2 v2.11.0
+	gorm.io/gorm v1.31.1
+)
+
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/jinzhu/now v1.1.5 // indirect
+	github.com/mattn/go-sqlite3 v1.14.22 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
+)
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
@@ -32,6 +45,8 @@ require (
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.2.1
+	gorm.io/driver/sqlite v1.6.0
 )
 
 // replace github.com/wailsapp/wails/v2 v2.11.0 => /home/mahcks/.gvm/pkgsets/go1.24.5/global/pkg/mod
