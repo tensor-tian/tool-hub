@@ -1,10 +1,10 @@
 import { useState } from "react";
 import logo from "@/assets/images/logo-universal.png";
-import "@/index.css";
 import { Greet } from "@/../wailsjs/go/app/App";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
 import {
   Card,
   CardContent,
@@ -45,7 +45,10 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 flex flex-col items-center justify-center p-8">
+    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex flex-col items-center justify-center p-8 transition-colors duration-200">
+      <div className="absolute top-4 right-4">
+        <DarkModeToggle />
+      </div>
       <div className="w-full max-w-2xl space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
@@ -55,17 +58,17 @@ function App() {
             alt="Wails Logo"
           />
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight text-slate-900">
+            <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
               Welcome to Wails!
             </h1>
-            <p className="text-slate-600 text-lg">
+            <p className="text-slate-600 dark:text-slate-400 text-lg">
               React + TypeScript + Vite + Tailwind CSS v4 + shadcn/ui
             </p>
           </div>
         </div>
 
         {/* Main Card */}
-        <Card className="shadow-xl border-slate-200">
+        <Card className="shadow-xl border-slate-200 dark:border-slate-700">
           <CardHeader>
             <CardTitle className="text-2xl">Greet Function Demo</CardTitle>
             <CardDescription>
@@ -87,8 +90,8 @@ function App() {
                 className="text-base h-11"
               />
             </div>
-            <div className="p-6 bg-slate-50 rounded-lg border border-slate-200 min-h-20 flex items-center justify-center">
-              <p className="text-center font-medium text-slate-900 text-lg">
+            <div className="p-6 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 min-h-20 flex items-center justify-center">
+              <p className="text-center font-medium text-slate-900 dark:text-slate-50 text-lg">
                 {resultText}
               </p>
             </div>
@@ -117,10 +120,10 @@ function App() {
 
         {/* Footer */}
         <div className="text-center space-y-2">
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             Built with ❤️ using Wails v2.11.0
           </p>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-500 dark:text-slate-500">
             Go backend • React frontend • Native desktop app
           </p>
         </div>
