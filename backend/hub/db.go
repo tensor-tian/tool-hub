@@ -15,7 +15,7 @@ import (
 
 var db *gorm.DB
 
-var models = []any{&Tool{}, &CommandLineTool{}, &ToolTestcase{}, &ServiceTool{}, &HTTPTool{}, &CallingLog{}, &ConcurrencyGroup{}}
+var models = []any{&Setting{}, &ToolTestcase{}}
 
 // InitDB initializes the database connection and performs auto migration for all models.
 func InitDB(ctx context.Context, isProduction bool) {
@@ -64,17 +64,6 @@ func InitDB(ctx context.Context, isProduction bool) {
 	runtime.LogInfof(ctx, "sqlite3 version: %s", v)
 
 	setModelContext(ctx)
-	initConcurrencyGroups(ctx)
-}
-
-func initConcurrencyGroups(ctx context.Context) {
-	for _, groupName := range []ConcurrencyGroupName{ConcurrencyGroupNone, ConcurrencyGroupSystem, ConcurrencyGroupTool} {
-		var group ConcurrencyGroup
-		res := db.Where(ConcurrencyGroup{Name: groupName}).Assign(ConcurrencyGroup{MaxConcurrent: 1}).FirstOrCreate(&group)
-		if res.Error != nil {
-			runtime.LogFatalf(ctx, "failed to create concurrency_group %s: %v", groupName, res.Error)
-		}
-	}
 }
 
 type dbLoggerForTest struct{}

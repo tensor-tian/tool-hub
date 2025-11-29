@@ -1,131 +1,109 @@
-import { useState } from "react";
-import logo from "@/assets/images/logo-universal.png";
-import { Greet } from "@/../wailsjs/go/app/App";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { DarkModeToggle } from "@/components/DarkModeToggle";
+import { Link, Switch, Route, useLocation } from 'wouter';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+  BrainCircuit,
+  ClipboardList,
+  Hammer,
+  House,
+  MessageSquareText,
+  Settings,
+  UserRound,
+} from 'lucide-react';
+import * as React from 'react';
+import { cn } from '@/lib/utils';
+import {
+  HomePage,
+  ClipboardPage,
+  PromptPage,
+  LLMPage,
+  UserPage,
+  SettingPage,
+  ToolPage,
+} from '@/pages';
+import { DarkModeToggle } from '@/components/DarkModeToggle';
+
+type IConComponent = typeof Settings;
+type FeatureProps = {
+  name: string;
+  Icon: IConComponent;
+  href: string;
+};
+const Feature: React.FC<FeatureProps> = ({ name, Icon, href }) => {
+  const [location] = useLocation();
+  const isActive = href === location;
+  return (
+    <Link
+      key={name}
+      href={href}
+      className={cn(
+        'w-8 h-8 flex items-center justify-center rounded-sm transition-colors',
+        isActive
+          ? 'bg-primary text-primary-foreground border border-border'
+          : 'text-muted-foreground hover:text-foreground hover:bg-accent/50',
+      )}
+    >
+      <Icon size="20" />
+    </Link>
+  );
+};
+
+const features = [
+  {
+    name: 'Home',
+    Icon: House,
+    href: '/',
+  },
+  {
+    name: 'Tools',
+    Icon: Hammer,
+    href: '/tools',
+  },
+  {
+    name: 'Clipboard History',
+    Icon: ClipboardList,
+    href: '/clipboard',
+  },
+  {
+    name: 'Prompt',
+    Icon: MessageSquareText,
+    href: '/prompt',
+  },
+  {
+    name: 'LLM',
+    Icon: BrainCircuit,
+    href: '/llm',
+  },
+].map((feature) => <Feature key={feature.name} {...feature} />);
+
+const settings = [
+  {
+    name: 'user',
+    Icon: UserRound,
+    href: '/user',
+  },
+  { name: 'setting', Icon: Settings, href: '/setting' },
+].map((setting) => <Feature key={setting.name} {...setting} />);
 
 function App() {
-  const [resultText, setResultText] = useState(
-    "Enter your name to get started!"
-  );
-  const [name, setName] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  async function greet() {
-    if (!name.trim()) {
-      setResultText("Please enter a name first! 🙏");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const result = await Greet(name);
-      setResultText(result);
-    } catch (error) {
-      setResultText("Oops! Something went wrong. 😕");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") {
-      greet();
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-linear-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 flex flex-col items-center justify-center p-8 transition-colors duration-200">
+    <div className="w-full h-full flex flex-col bg-background text-foreground">
       <div className="absolute top-4 right-4">
         <DarkModeToggle />
       </div>
-      <div className="w-full max-w-2xl space-y-8">
-        {/* Header */}
-        <div className="text-center space-y-4">
-          <img
-            src={logo}
-            className="w-32 h-32 object-contain mx-auto drop-shadow-lg hover:scale-105 transition-transform"
-            alt="Wails Logo"
-          />
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-              Welcome to Wails!
-            </h1>
-            <p className="text-slate-600 dark:text-slate-400 text-lg">
-              React + TypeScript + Vite + Tailwind CSS v4 + shadcn/ui
-            </p>
-          </div>
+      <div className="flex flex-1 min-h-0">
+        <div className="w-10 flex flex-col justify-between border-r border-border bg-secondary/30 dark:bg-secondary/10 z-20">
+          <div className="text-center flex flex-col items-center pt-2 gap-2">{features}</div>
+          <div className="text-center flex flex-col items-center gap-2">{settings}</div>
         </div>
-
-        {/* Main Card */}
-        <Card className="shadow-xl border-slate-200 dark:border-slate-700">
-          <CardHeader>
-            <CardTitle className="text-2xl">Greet Function Demo</CardTitle>
-            <CardDescription>
-              Try out the Go backend integration by entering your name below
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-base">
-                Your Name
-              </Label>
-              <Input
-                id="name"
-                placeholder="Enter your name..."
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                onKeyPress={handleKeyPress}
-                disabled={isLoading}
-                className="text-base h-11"
-              />
-            </div>
-            <div className="p-6 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 min-h-20 flex items-center justify-center">
-              <p className="text-center font-medium text-slate-900 dark:text-slate-50 text-lg">
-                {resultText}
-              </p>
-            </div>
-          </CardContent>
-          <CardFooter className="flex gap-3">
-            <Button
-              onClick={greet}
-              disabled={isLoading}
-              className="flex-1 h-11 text-base"
-            >
-              {isLoading ? "Greeting..." : "Greet Me! 👋"}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setName("");
-                setResultText("Enter your name to get started!");
-              }}
-              disabled={isLoading}
-              className="h-11"
-            >
-              Clear
-            </Button>
-          </CardFooter>
-        </Card>
-
-        {/* Footer */}
-        <div className="text-center space-y-2">
-          <p className="text-sm text-slate-600 dark:text-slate-400">
-            Built with ❤️ using Wails v2.11.0
-          </p>
-          <p className="text-xs text-slate-500 dark:text-slate-500">
-            Go backend • React frontend • Native desktop app
-          </p>
+        <div className="flex-1 min-h-0">
+          <Switch>
+            <Route path="/" component={HomePage} />
+            <Route path="/tools" component={ToolPage} />
+            <Route path="/clipboard" component={ClipboardPage} />
+            <Route path="/prompt" component={PromptPage} />
+            <Route path="/llm" component={LLMPage} />
+            <Route path="/user" component={UserPage} />
+            <Route path="/setting" component={SettingPage} />
+          </Switch>
         </div>
       </div>
     </div>

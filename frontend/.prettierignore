@@ -1,0 +1,20 @@
+# Ignore dependencies
+node_modules
+
+# Build outputs
+dist
+build
+
+# Editor and OS files
+.DS_Store
+*.log
+
+# Ignore generated wails bindings and related code
+wailsjs/**
+
+
+# Ignore generated frontend assets
+wailsjs/**
+
+# lockfiles
+pnpm-lock.yaml

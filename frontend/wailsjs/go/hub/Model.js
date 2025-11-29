@@ -5,3 +5,23 @@
 export function GetDirs() {
   return window['go']['hub']['Model']['GetDirs']();
 }
+
+export function GetSettings(arg1) {
+  return window['go']['hub']['Model']['GetSettings'](arg1);
+}
+
+export function GetToolDetail(arg1) {
+  return window['go']['hub']['Model']['GetToolDetail'](arg1);
+}
+
+export function GetToolTestcaseList(arg1) {
+  return window['go']['hub']['Model']['GetToolTestcaseList'](arg1);
+}
+
+export function GetTools() {
+  return window['go']['hub']['Model']['GetTools']();
+}
+
+export function SaveSetting(arg1, arg2) {
+  return window['go']['hub']['Model']['SaveSetting'](arg1, arg2);
+}

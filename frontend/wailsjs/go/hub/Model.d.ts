@@ -3,3 +3,13 @@
 import {hub} from '../models';
 
 export function GetDirs():Promise<hub.Dirs>;
+
+export function GetSettings(arg1:Array<string>):Promise<hub.RespGetSettings>;
+
+export function GetToolDetail(arg1:string):Promise<hub.RespToolDetail>;
+
+export function GetToolTestcaseList(arg1:string):Promise<hub.RespGetToolTestcaseList>;
+
+export function GetTools():Promise<hub.RespGetToolList>;
+
+export function SaveSetting(arg1:string,arg2:string):Promise<hub.RespSaveSetting>;

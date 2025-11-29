@@ -96,18 +96,14 @@ func main() {
 	}
 }
 
-type StringValues string
-
 type StringEnumItem struct {
-	Value  StringValues
+	Value  hub.StringValues
 	TSName string
 }
 
 func genStringEnumBinds() []StringEnumItem {
 	return []StringEnumItem{
-		{StringValues("white"), "ColorOfIcebear"},
-		{StringValues("pink"), "ColorOfMeiMeiBear"},
-		{StringValues("MeiMeiBear"), "MyFavoriteBear"},
+		{hub.SettingKeyToolDir, "SettingKeyToolsDir"},
 	}
 }
 
