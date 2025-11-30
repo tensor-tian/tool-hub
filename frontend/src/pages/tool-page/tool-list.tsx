@@ -13,12 +13,6 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from '@/components/ui/sidebar';
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from '@/components/ui/context-menu';
 import { useToolPageStore, useShallow } from './store';
 import { cn } from '@/lib/utils';
 

@@ -2,6 +2,7 @@ package hub
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path"
@@ -110,35 +111,137 @@ func (m *Model) SaveSetting(key string, value string) (resp RespSaveSetting) {
 
 // #region Tools
 
-type Tool struct {
+type ToolBrief struct {
+	ID          int    `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
-	Type        string `json:"type"`
+	Category    string `json:"category"`
 }
 
-type ToolDetail struct {
-	Tool
-	Parameters           string `json:"parameters"`
-	LogLifeSpan          string `json:"logLifeSpan"`
-	ConcurrencyGroupName string `json:"concurrencyGroupName"`
-	Extra                string `json:"extra"`
+func (t *ToolBrief) TableName() string {
+	return "tools"
 }
 
 type RespGetToolList struct {
-	Error string `json:"error"`
-	List  []Tool `json:"list"`
+	Error string      `json:"error"`
+	List  []ToolBrief `json:"list"`
 }
 
-type RespToolDetail struct {
-	Error string     `json:"error"`
-	item  ToolDetail `json:"item"`
-}
-
-func (m *Model) GetTools() (resp RespGetToolList) {
+func (m *Model) GetToolList() (resp RespGetToolList) {
+	list, err := gorm.G[ToolBrief](db).Select("id", "name", "description").Order("name").Find(m.ctx)
+	if err != nil {
+		resp.Error = fmt.Sprintf("failed to list tools: %v", err)
+		if m.ctx != nil {
+			runtime.LogError(m.ctx, resp.Error)
+		}
+		return
+	}
+	resp.List = list
 	return
 }
 
-func (m *Model) GetToolDetail(name string) (resp RespToolDetail) {
+type RespGetTool struct {
+	Error string `json:"error"`
+	Item  Tool   `json:"item"`
+}
+
+func (m *Model) GetTool(id int) (resp RespGetTool) {
+	var err error
+	resp.Item, err = gorm.G[Tool](db).Where("id = ?", id).Take(m.ctx)
+	if err != nil {
+		resp.Error = fmt.Sprintf("failed to get tool detail: %v", err)
+		if m.ctx != nil {
+			runtime.LogError(m.ctx, resp.Error)
+		}
+		return
+	}
+	return
+}
+
+type RespGetCommandLineTool struct {
+	Error string          `json:"error"`
+	Item  CommandLineTool `json:"item"`
+}
+
+func (m *Model) GetCommandLineTool(id int) (resp RespGetCommandLineTool) {
+	// Get base tool from database
+	tool, err := gorm.G[Tool](db).Where("id = ?", id).Take(m.ctx)
+	if err != nil {
+		resp.Error = fmt.Sprintf("failed to get tool: %v", err)
+		if m.ctx != nil {
+			runtime.LogError(m.ctx, resp.Error)
+		}
+		return
+	}
+
+	// Set base tool info
+	// resp.Item.Tool = tool
+
+	// Evaluate the tool with default parameters using frontend WebWorker
+	if tool.Code != "" && tool.DefaultParams != "" {
+		toolData, err := EvalTool(m.ctx, tool.Code, tool.DefaultParams)
+		if err != nil {
+			resp.Error = fmt.Sprintf("failed to evaluate tool: %v", err)
+			if m.ctx != nil {
+				runtime.LogError(m.ctx, resp.Error)
+			}
+			return
+		}
+		// Parse the evaluated command line tool
+		if err := json.Unmarshal(toolData, &resp.Item); err != nil {
+			resp.Error = fmt.Sprintf("failed to parse command line tool: %v", err)
+			if m.ctx != nil {
+				runtime.LogError(m.ctx, resp.Error)
+			}
+			return
+		}
+		resp.Item.BaseModel = tool.BaseModel
+	}
+
+	return
+}
+
+type RespGetHTTPTool struct {
+	Error string   `json:"error"`
+	Item  HTTPTool `json:"item"`
+}
+
+func (m *Model) GetHTTPTool(id int) (resp RespGetHTTPTool) {
+	// Get base tool from database
+	tool, err := gorm.G[Tool](db).Where("id = ?", id).Take(m.ctx)
+	if err != nil {
+		resp.Error = fmt.Sprintf("failed to get tool: %v", err)
+		if m.ctx != nil {
+			runtime.LogError(m.ctx, resp.Error)
+		}
+		return
+	}
+
+	// Set base tool info
+	// resp.Item.Tool = tool
+
+	// Evaluate the tool with default parameters using frontend WebWorker
+	if tool.Code != "" && tool.DefaultParams != "" {
+		toolData, err := EvalTool(m.ctx, tool.Code, tool.DefaultParams)
+		if err != nil {
+			resp.Error = fmt.Sprintf("failed to evaluate tool: %v", err)
+			if m.ctx != nil {
+				runtime.LogError(m.ctx, resp.Error)
+			}
+			return
+		}
+
+		// Parse the evaluated HTTP tool
+		if err := json.Unmarshal(toolData, &resp.Item); err != nil {
+			resp.Error = fmt.Sprintf("failed to parse HTTP tool: %v", err)
+			if m.ctx != nil {
+				runtime.LogError(m.ctx, resp.Error)
+			}
+			return
+		}
+		resp.Item.BaseModel = tool.BaseModel
+	}
+
 	return
 }
 

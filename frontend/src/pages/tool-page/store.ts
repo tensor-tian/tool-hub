@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { immer } from 'zustand/middleware/immer';
 import { combine } from 'zustand/middleware';
-import { GetSettings, GetTools, GetToolDetail } from '@/../wailsjs/go/hub/Model';
+import { GetSettings, GetToolList, GetCommandLineTool } from '@/../wailsjs/go/hub/Model';
 import { hub } from '@/../wailsjs/go/models';
 
 export { useShallow } from 'zustand/shallow';
@@ -22,7 +22,7 @@ export const useToolPageStore = create(
         toolsDir: '',
         tools: [] as hub.Tool[],
         testcases: [] as TToolTestcase[],
-        activeTool: null as hub.ToolDetail | null,
+        activeTool: null as hub.CommandLineTool | null,
       },
       (set, get) => {
         return {
